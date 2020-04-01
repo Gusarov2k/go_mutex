@@ -8,9 +8,11 @@ type DataCache struct {
 	cache map[string]string
 	mu sync.RWMutex
 }
+func (c *DataCache) New() {
+	c.cache = make(map[string]string)
+}
 
 func (c *DataCache) Set(key string,  value string) {
-	c.cache = make(map[string]string)
 	c.mu.Lock()
 	c.cache[key] = value
 	c.mu.Unlock()
@@ -21,18 +23,34 @@ func (c *DataCache) Get(key string) string {
 	name := c.cache[key]
 	defer c.mu.Unlock()
 	if name == "" {
-		return "empty value"
+		return ""
 	}
 	return name
 }
 
 func (c *DataCache) Delete(key string) string {
 	c.mu.Lock()
-	_, ok := c.cache[key];
+	_, ok := c.cache[key]
+
 	if ok {
-		delete(c.cache, key);
+		delete(c.cache, key)
+		c.mu.Unlock()
 		return "key deleted"
+	} else {
+		c.mu.Unlock()
+		return "key not find"
 	}
-	defer c.mu.Unlock()
-	return "key not find"
+}
+
+func (c *DataCache) Update(key string,  value string) string {
+	c.mu.Lock()
+	_, ok := c.cache[key]
+	if ok {
+		c.cache[key] = value
+		c.mu.Unlock()
+		return "key update"
+	} else {
+		c.mu.Unlock()
+		return "key not find"
+	}
 }

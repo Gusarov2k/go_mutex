@@ -14,17 +14,16 @@ func (c *DataCache) New() {
 
 func (c *DataCache) Set(key string,  value string) {
 	c.mu.Lock()
+	defer c.mu.Unlock()
+	
 	c.cache[key] = value
-	c.mu.Unlock()
 }
 
 func (c *DataCache) Get(key string) string {
 	c.mu.Lock()
-	name := c.cache[key]
 	defer c.mu.Unlock()
-	if name == "" {
-		return ""
-	}
+
+	name := c.cache[key]
 	return name
 }
 
@@ -44,10 +43,11 @@ func (c *DataCache) Delete(key string) string {
 
 func (c *DataCache) Update(key string,  value string) string {
 	c.mu.Lock()
+	defer c.mu.Unlock()
+
 	_, ok := c.cache[key]
 	if ok {
 		c.cache[key] = value
-		c.mu.Unlock()
 		return "key update"
 	} else {
 		c.mu.Unlock()

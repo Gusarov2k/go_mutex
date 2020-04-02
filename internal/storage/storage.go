@@ -27,30 +27,27 @@ func (c *DataCache) Get(key string) string {
 	return name
 }
 
-func (c *DataCache) Delete(key string) string {
+func (c *DataCache) Delete(key string) {
 	c.mu.Lock()
 	_, ok := c.cache[key]
 
 	if ok {
 		delete(c.cache, key)
 		c.mu.Unlock()
-		return "key deleted"
 	} else {
 		c.mu.Unlock()
-		return "key not find"
 	}
 }
 
-func (c *DataCache) Update(key string,  value string) string {
+func (c *DataCache) Update(key string,  value string) bool {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
 	_, ok := c.cache[key]
 	if ok {
 		c.cache[key] = value
-		return "key update"
+		return true
 	} else {
-		c.mu.Unlock()
-		return "key not find"
+		return false
 	}
 }

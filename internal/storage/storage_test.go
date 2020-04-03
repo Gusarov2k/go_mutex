@@ -26,15 +26,17 @@ func TestDelete(t *testing.T) {
 func TestUpdate(t *testing.T) {
 	data := storage.DataCache{}
 	data.New()
-	data.Set("one", "value")
 
-	assert.True(t, true, data.Update("one", "full"), "map myst be updated: ", data.Update("one", "full"))
-}
+	t.Run("success update", func(t *testing.T){
+		data.Set("one", "value")
 
-func TestNotUpdate(t *testing.T) {
-	data := storage.DataCache{}
-	data.New()
-	data.Set("second", "value")
+		assert.True(t, true, data.Update("one", "full"), "map myst be updated: ", data.Update("one", "full"))
 
-	assert.False(t, false, data.Update("one", "full"), " method update return: ", data.Update("one", "full"))
+	})
+
+	t.Run("error update", func(t *testing.T){
+		data.Set("second", "value")
+
+		assert.False(t, false, data.Update("one", "full"), " method update return: ", data.Update("one", "full"))
+	})
 }
